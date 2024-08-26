@@ -5,9 +5,31 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: black;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+@font-face {
+  font-family: Craftwork Gro;
+  src: url('./fonts/craftwork-grotesk-cufon/CraftworkGrotesk-Bold.ttf') format('truetype'),
+      url('./fonts/craftwork-grotesk-cufon/CraftworkGrotesk-Heavy.ttf') format('truetype'),
+      url('./fonts/craftwork-grotesk-cufon/CraftworkGrotesk-Medium.ttf') format('truetype'),
+      url('./fonts/craftwork-grotesk-cufon/CraftworkGrotesk-Regular.ttf') format('truetype'),
+      url('./fonts/craftwork-grotesk-cufon/CraftworkGrotesk-SemiBold.ttf') format('truetype'),
+      url('./fonts/craftwork-grotesk-cufon/CraftworkGroteskGX.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: Manrope;
+  src: url('./fonts/Manrope/Manrope-Bold.ttf') format('truetype'),
+      url('./fonts/Manrope/Manrope-ExtraBold.ttf') format('truetype'),
+      url('./fonts/Manrope/Manrope-ExtraLight.ttf') format('truetype'),
+      url('./fonts/Manrope/Manrope-Light.ttf') format('truetype'),
+      url('./fonts/Manrope/Manrope-Medium.ttf') format('truetype'),
+      url('./fonts/Manrope/Manrope-Regular.ttf') format('truetype'),
+      url('./fonts/Manrope/Manrope-SemiBold.ttf') format('truetype'),
 }
