@@ -1,13 +1,13 @@
-import "./styles.css";
+import React, { useRef, useState, useEffect } from 'react';
 import { Button } from "@mui/material";
+
 import BackImg from "../assets/back.png";
-import Flame from "../assets/flame.png"
 import Bonus1 from "../assets/bonus1.png";
 import Bonus2 from "../assets/bonus2.png";
-import Leagure from "../assets/league.png";
-import React, { useRef, useState, useEffect } from 'react';
-import './Wheel.css';
+import League from "../assets/league.png";
 
+import './Wheel.css';
+import "./styles.css";
 
 Number.prototype.format = function (n) {
   const r = new RegExp('\\d(?=(\\d{3})+' + (n > 0 ? '\\.' : '$') + ')', 'g');
@@ -15,87 +15,51 @@ Number.prototype.format = function (n) {
 };
 
 export default function WheelFortune() {
+  const [sectors, setSectors] = useState([
+    { color: "#3986E2", label: "10" },
+    { color: ["#1C3994", "#1A3791", "#173394", "#173394", "#112B6B", "#092127", "#0921a7"], label: "5" },
+    { color: "#3986E2", label: "3" },
+    { color: ["#1C3994", "#1A3791", "#173394", "#173394", "#112B6B", "#092127", "#0921a7"], label: "2" },
+    { color: "#3986E2", label: "1" },
+    { color: ["#1C3994", "#1A3791", "#173394", "#173394", "#112B6B", "#092127", "#0921a7"], label: "x10 ref" },
+    { color: "#3986E2", label: "x5 ref" },
+    { color: ["#1C3994", "#1A3791", "#173394", "#173394", "#112B6B", "#092127", "#0921a7"], label: "x2 ref" },
+  ]);
+
+  const [currentValues, setCurrentValues] = useState([
+    { color: "#3986E2", label: "10" },
+    { color: ["#1C3994", "#1A3791", "#173394", "#173394", "#112B6B", "#092127", "#0921a7"], label: "5" },
+    { color: "#3986E2", label: "3" },
+    { color: ["#1C3994", "#1A3791", "#173394", "#173394", "#112B6B", "#092127", "#0921a7"], label: "2" },
+    { color: "#3986E2", label: "1" },
+    { color: ["#1C3994", "#1A3791", "#173394", "#173394", "#112B6B", "#092127", "#0921a7"], label: "x10 ref" },
+    { color: "#3986E2", label: "x5 ref" },
+    { color: ["#1C3994", "#1A3791", "#173394", "#173394", "#112B6B", "#092127", "#0921a7"], label: "x2 ref" },
+  ]);
   const [showResult, setShowResult] = useState(false);
   const [showButton, setShowButton] = useState(0);
-  const [showFlame, setShowFlame] = useState(false);
 
   const [moveText, setMoveText] = useState(false);
   const [moveText1, setMoveText1] = useState(false);
-
-  const [tempResult1, setTempResult1] = useState(false);
-  const [tempResult2, setTempResult2] = useState(false);
 
   const [platinum, setPlatinum] = useState(4);
   const [logInDays, setLogInDays] = useState(10);
   const [showLeague, setShowLeague] = useState(false);
   const [showStreak, setShowStreak] = useState(false);
   const [showWheel, setShowWheel] = useState(false);
+  const [showCoin, setShowCoin] = useState(false);
 
   const canvasRef = useRef(null);
   const requestRef = useRef(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const [countSpin, setCountSpin] = useState(0);
-  const [sectors, setSectors] = useState([
-    { color: "#3986E2", label: "1" },
-    { color: ["#1C3994", "#1A3791", "#173394", "#173394", "#112B6B", "#092127", "#0921a7"], label: "2" },
-    { color: "#3986E2", label: "3" },
-    { color: ["#1C3994", "#1A3791", "#173394", "#173394", "#112B6B", "#092127", "#0921a7"], label: "5" },
-    { color: "#3986E2", label: "10" },
-    { color: ["#1C3994", "#1A3791", "#173394", "#173394", "#112B6B", "#092127", "#0921a7"], label: "x2 ref" },
-    { color: "#3986E2", label: "x5 ref" },
-    { color: ["#1C3994", "#1A3791", "#173394", "#173394", "#112B6B", "#092127", "#0921a7"], label: "x10 ref" },
-  ]);
-
-  const [currentValues, setCurrentValues] = useState([
-    { color: "#3986E2", label: "1" },
-    { color: ["#1C3994", "#1A3791", "#173394", "#173394", "#112B6B", "#092127", "#0921a7"], label: "2" },
-    { color: "#3986E2", label: "3" },
-    { color: ["#1C3994", "#1A3791", "#173394", "#173394", "#112B6B", "#092127", "#0921a7"], label: "5" },
-    { color: "#3986E2", label: "10" },
-    { color: ["#1C3994", "#1A3791", "#173394", "#173394", "#112B6B", "#092127", "#0921a7"], label: "x2 ref" },
-    { color: "#3986E2", label: "x5 ref" },
-    { color: ["#1C3994", "#1A3791", "#173394", "#173394", "#112B6B", "#092127", "#0921a7"], label: "x10 ref" },
-  ]);
   const [isRendered, setIsRendered] = useState(false);
   const [duration, setDuration] = useState(20000);
-  const [originalSize, setOriginalSize] = useState(false);
   const [isVibration, setIsVibration] = useState(false);
-
-  useEffect(() => {
-    if (!isRendered) {
-      setIsRendered(true)
-      return;
-    }
-    const startTime = Date.now();
-    const easeOutExpo = (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-
-    const updateCounters = () => {
-      const elapsed = (Date.now() - startTime) / duration;
-      const progress = easeOutExpo(Math.min(elapsed, 1));
-
-      setCurrentValues(sectors.map((sector, index) => {
-        if (index >= 5) {
-          return sector;
-        } else {
-          const endValue = Number(sector.label);
-          return { label: Math.floor(progress * endValue), color: sector.color };
-        }
-      }));
-
-      if (elapsed < 1) {
-        requestAnimationFrame(updateCounters);
-      } else {
-        setCurrentValues(sectors);
-      }
-    };
-
-    updateCounters();
-  }, [sectors]);
 
   const TAU = 2 * Math.PI;
   const arc = TAU / sectors.length;
-  // const friction = 0.998;
-  const friction = 0.997;
+  const friction = 0.9925;
   const angVelMin = 0.002;
   const angVelMaxRef = useRef(0);
   const angVelRef = useRef(0); // Current angular velocity
@@ -122,13 +86,11 @@ export default function WheelFortune() {
     ctx.save();
     ctx.beginPath();
     if (typeof (sector.color) === "string") {
-      // If the color is a single color (less than 10 characters), use it as fill style
       ctx.fillStyle = sector.color;
     } else {
-      //   // Create a radial gradient with the provided color array
       const gradient = ctx.createRadialGradient(
-        rad, rad, 0,         // Start circle at the center with radius 0
-        rad, rad, rad       // End circle at the center with the radius of the sector
+        rad, rad, 0,
+        rad, rad, rad
       );
 
       // Distribute the color stops evenly
@@ -175,12 +137,12 @@ export default function WheelFortune() {
 
     if (isAcceleratingRef.current) {
       // Accelerate
-      angVelRef.current = angVelRef.current || angVelMin; // Initial velocity kick
+      angVelRef.current = angVelRef.current || angVelMin;
       angVelRef.current *= 1.06; // Accelerate
     } else {
       // Decelerate
       isAcceleratingRef.current = false;
-      angVelRef.current *= friction; // Decelerate by fricti
+      angVelRef.current *= friction;
 
       // Stop spinning
       if (angVelRef.current < angVelMin) {
@@ -190,10 +152,41 @@ export default function WheelFortune() {
       }
     }
 
-    angRef.current += angVelRef.current; // Update angle
+    angRef.current += angVelRef.current;
     angRef.current %= TAU; // Normalize angle
     rotate(ctx, rad);
   };
+
+  useEffect(() => {
+    if (!isRendered) {
+      setIsRendered(true)
+      return;
+    }
+    const startTime = Date.now();
+    const easeOutExpo = (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+
+    const updateCounters = () => {
+      const elapsed = (Date.now() - startTime) / duration;
+      const progress = easeOutExpo(Math.min(elapsed, 1));
+
+      setCurrentValues(sectors.map((sector, index) => {
+        if (index >= 5) {
+          return sector;
+        } else {
+          const endValue = Number(sector.label);
+          return { label: Math.floor(progress * endValue), color: sector.color };
+        }
+      }));
+
+      if (elapsed < 1) {
+        requestAnimationFrame(updateCounters);
+      } else {
+        setCurrentValues(sectors);
+      }
+    };
+
+    updateCounters();
+  }, [sectors]);
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
@@ -226,7 +219,6 @@ export default function WheelFortune() {
       setTimeout(() => {
         setShowWheel(true);
       }, 1000); // Delay for wheel-fortune
-      setShowFlame(true);
     }
 
     displayItems();
@@ -242,34 +234,18 @@ export default function WheelFortune() {
     setTimeout(() => {
       setMoveText(2);
       setMoveText1(2);
-    }, 3800); // Show result
-
-    setTimeout(() => {
-      setTempResult1(true);
-    }, (3300));
-
-    setTimeout(() => {
-      setTempResult2(true);
-    }, (3400));
-
-    setTimeout(() => {
-      setTempResult1(false);
-      setTempResult2(false);
-    }, 4400);
+    }, 3300); // Show result
 
     setTimeout(() => {
       setShowResult(true);
-    }, 4100);
-
-    // setTimeout(() => {
-    //   setShowResult(true);
-    // }, 3300); // Show result
+      setShowCoin(true);
+    }, 3500);
 
     setTimeout(() => {
       setIsVibration(true);
-    }, 4800)
+    }, 4200)
 
-    const duration = 4000 * platinum * logInDays / 40;
+    const duration = 3000 * platinum * logInDays / 40;
     setTimeout(() => {
       const multipliedSectors = sectors.map((item) => {
         const value = parseInt(item.label); // Try to convert the option to a number
@@ -284,14 +260,8 @@ export default function WheelFortune() {
     }, 5000);
 
     setTimeout(() => {
-      setOriginalSize(true);
-    }, 5000)
-
-
-    setTimeout(() => {
       setShowButton(1);
     }, 4500 + duration);
-
   }, []);
 
   const handleSpinClick = () => {
@@ -308,37 +278,57 @@ export default function WheelFortune() {
     }
   };
 
-
-
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const totalImages = 16;
-  const displayDuration = 2000;
-  const intervalDuration = displayDuration / totalImages;
-
   const customStyle1 = {
     '--i': 1,
   }
+  const coinStyle = {
+    '--coin-to-x': 'calc(-100px + 24px)',
+    '--coin-to-y': 'calc(-105px + 24px)',
+    '--coin-delay': '0.3s'
+  };
 
-  const customStyle2 = {
-    '--i': 2,
-  }
+  const coinStyle2 = {
+    '--coin-to-x': 'calc(-70px + 24px)',
+    '--coin-to-y': '-90px',
+    '--coin-delay': '0.1s'
+  };
 
-  const customStyle3 = {
-    '--i': 3,
-  }
+  const coinStyle3 = {
+    '--coin-to-x': 'calc(-30px + 24px)',
+    '--coin-to-y': '-125px',
+    '--coin-delay': '0s'
+  };
 
-  const resultStyles = [
-    customStyle1,
-    customStyle2,
-    customStyle3
-  ]
+  const coinStyle4 = {
+    '--coin-to-x': 'calc(10px + 24px)',
+    '--coin-to-y': '-130px',
+    '--coin-delay': '0.2s'
+  };
+
+  const coinStyle5 = {
+    '--coin-to-x': 'calc(30px + 24px)',
+    '--coin-to-y': '-100px',
+    '--coin-delay': '0.1s'
+  };
+
+  const coinStyle6 = {
+    '--coin-to-x': 'calc(70px + 24px)',
+    '--coin-to-y': '-95px',
+    '--coin-delay': '0.4s'
+  };
+
+  const coinStyle7 = {
+    '--coin-to-x': 'calc(100px + 24px)',
+    '--coin-to-y': '-100px',
+    '--coin-delay': '0.2s'
+  };
 
   return (
     <div className={`wheel-fortune-container ${isVibration ? "wheel-vibration" : ""}`}>
       <div className="bonus-section">
         <div className={`bonus-league ${showLeague ? "fade-in-league" : ""}`}>
           <span>League</span>
-          <div style={{ position: "relative" }}>
+          <div className="bonus-div">
             <div>
               <img src={Bonus1} />
             </div>
@@ -349,12 +339,12 @@ export default function WheelFortune() {
           </div>
           <div className="bottom">
             <span>Платина</span>
-            <img src={Leagure} width={20} />
+            <img src={League} width={20} />
           </div>
         </div>
         <div className={`bonus-streak ${showStreak ? "fade-in-streak" : ""}`}>
           <span>Streak</span>
-          <div style={{ position: "relative" }}>
+          <div className="bonus-div">
             <div>
               <img src={Bonus2} />
             </div>
@@ -372,51 +362,28 @@ export default function WheelFortune() {
       <div>
         <div className={`wheel-fortune ${showWheel ? "fade-in-wheel" : ""}`}>
           <div className="wheel">
-            {/* <WheelOfFortune /> */}
             <canvas ref={canvasRef} id="wheel" width="330" height="330"></canvas>
           </div>
           <div className="border-img">
             <img src={BackImg} alt="Wheel Background" />
           </div>
-          {
-            // showResult && <div className={`flame-effect ${showFlame ? "show-flame" : ""}`}>
-            //   <img
-            //     src={`/img/${imageUrls[currentImageIndex]}`}
-            //     alt="Slideshow"
-            //     style={{ maxWidth: '', display: 'block', margin: '0 auto' }}
-            //   />
-            // </div>
-          }
-
-          {/* <div className={`result-text ${(showResult && !originalSize) ? "show" : ""} ${originalSize ? "original" : ""}`}> */}
-          {/* <div style={{ width: "100%", position: "absolute", display: "flex", alignItems: "center", justifyContent: "center", top: "62px" }}>
-            <span className={`temp-result ${tempResult1 ? "show-temp" : ""}`}>{platinum}x</span>
-            <span className={`temp-result1 ${tempResult2 ? "show-temp" : ""}`}>{logInDays}x</span>
-          </div> */}
-
-          {/* <div style={{ width: "100%", position: "absolute", display: "flex", alignItems: "center", justifyContent: "center", top: "62px" }}>
-            <span className={`result ${showResult ? "show-result" : ""}`}>{platinum * logInDays}x</span>
-          </div> */}
-          {/* <div className="temp-result">
-            <span className="result-logindays">{logInDays}x</span>
-          </div> */}
+          <div className={showCoin ? "wrap" : "hide-coin"}>
+            <div className="wallet" id="wallet">
+              <div className="coin coin--animated" style={coinStyle}></div>
+              <div className="coin coin--animated" style={coinStyle2}></div>
+              <div className="coin coin--animated" style={coinStyle3}></div>
+              <div className="coin coin--animated" style={coinStyle4}></div>
+              <div className="coin coin--animated" style={coinStyle5}></div>
+              <div className="coin coin--animated" style={coinStyle6}></div>
+              <div className="coin coin--animated" style={coinStyle7}></div>
+            </div>
+          </div>
           <div className={`result-text ${showResult ? "show" : ""}`}>
             <div>
               <span style={customStyle1}>x</span>
-              {
-                (platinum * logInDays).toString().split('').map((char, index) => <span key={index} style={resultStyles[index % 3]}>{char}</span>)
-              }
+              {(platinum * logInDays).toString().split('').map((char, index) => <span key={index}>{char}</span>)}
             </div>
           </div>
-          {/* <div className={`result-text ${showResult ? "show" : ""}`}>
-            <div>
-              <span style={customStyle1}>x</span>
-              {
-                (platinum * logInDays).toString().split('').map((char, index) => <span key={index} style={resultStyles[index % 3]}>{char}</span>)
-              }
-            </div>
-          </div> */}
-
         </div>
 
         <Button
@@ -426,7 +393,6 @@ export default function WheelFortune() {
         >
           Вращать
         </Button>
-
       </div>
     </div>
   );

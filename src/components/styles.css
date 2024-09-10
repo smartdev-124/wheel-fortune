@@ -185,10 +185,100 @@
 }
 
 .result-text div span {
-  font-size: 36px;
+  font-size: 32px;
 }
 
+* {
+  padding: 0;
+  margin: 0;
+}
 
+.wrap {
+  /* padding-top: calc(75vh - 64px); */
+  display: flex;
+  justify-content: center;
+  top: 0px;
+  position:absolute;
+  top: 54px;
+  width: 100%;
+}
+
+.hide-coin {
+  display: none;
+}
+
+.wallet {
+  width: 64px;
+  height: 64px;
+  position: relative;
+}
+
+.coin {
+  position: absolute;
+  top: var(--coin-from-x, 24px);
+  left: var(--coin-from-y, 24px);
+  z-index: 100;
+  opacity: 0;
+}
+
+.coin::after {
+  content: "$";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  font-size: 10px;
+  color: rgb(237, 196, 107);
+  background: rgb(227, 162, 23);
+  border: 2px solid rgb(237, 196, 107);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.coin--animated,
+.coin--animated::after {
+  animation-delay: var(--coin-delay, 0s);
+  animation-duration: var(--coin-duration, 0.7s);
+  animation-direction: normal;
+  animation-fill-mode: both;
+  animation-play-state: running;
+  /* animation-iteration-count: infinite; */
+}
+
+.coin--animated {
+  animation-name: coin-x-axis;
+  animation-timing-function: ease-in;
+}
+
+.coin--animated::after {
+  animation-name: coin-y-axis-and-flip;
+  animation-timing-function: ease-out;
+}
+
+@keyframes coin-x-axis {
+  30% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  to {
+    left: calc(var(--coin-to-x) * 1.5);
+  }
+}
+
+@keyframes coin-y-axis-and-flip {
+  30% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  to {
+    transform: translateY(calc(var(--coin-to-y) * 1.5)) rotate3d(1, 1, 1, 1080deg);
+  }
+}
 
 .result-text.original div {
   opacity: 1;
@@ -246,6 +336,10 @@
   align-items: center;
   justify-content: space-between;
   z-index: 5;
+}
+
+.bonus-div {
+  position: relative;
 }
 
 .bonus-league,
